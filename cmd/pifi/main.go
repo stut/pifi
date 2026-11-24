@@ -12,7 +12,8 @@ import (
 	"github.com/stut/pifi/utils"
 )
 
-const version = "0.1.0"
+// Release builds set version to their tag with -ldflags "-X main.version=...".
+var version = "dev"
 
 const defaultWirelessInterface = "wlan0"
 
@@ -22,7 +23,7 @@ func main() {
 	flag.Parse()
 
 	if *showVersion {
-		fmt.Printf("PiFi v%s\n", version)
+		fmt.Printf("PiFi %s\n", version)
 		return
 	}
 

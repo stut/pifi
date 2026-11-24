@@ -1,6 +1,8 @@
+name: release
+
 on:
   release:
-    types: [created]
+    types: [published]
 
 permissions:
     contents: write
@@ -18,6 +20,14 @@ jobs:
             goarm: "6"
     steps:
     - uses: actions/checkout@v4
+    - name: Validate release tag
+      env:
+        RELEASE_TAG: ${{ github.event.release.tag_name }}
+      run: |
+        if [[ ! "$RELEASE_TAG" =~ ^[A-Za-z0-9][A-Za-z0-9.+_-]*$ ]]; then
+          echo "Release tags must contain only letters, digits, dots, plus signs, underscores or hyphens."
+          exit 1
+        fi
     - uses: wangyoucao577/go-release-action@v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -27,4 +37,8 @@ jobs:
         project_path: "./cmd/pifi"
         # Keep the runner's build paths out of log lines.
         build_flags: -trimpath
+        ldflags: -s -w -X main.version=${{ github.event.release.tag_name }}
         binary_name: "pifi"
+        md5sum: false
+        sha256sum: true
+        extra_files: LICENSE README.md SECURITY.md

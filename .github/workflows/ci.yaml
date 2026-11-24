@@ -25,5 +25,10 @@ jobs:
         fi
     - run: go vet ./...
     - run: go test -race ./...
+    - name: Installer checks
+      run: |
+        sh -n install.sh
+        bash -n build.sh
+        python3 -m unittest discover -s tests -p '*_test.py'
     - name: Cross-compile for the Pi
       run: GOOS=linux GOARCH=arm GOARM=6 go build ./...

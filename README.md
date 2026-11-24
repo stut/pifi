@@ -13,8 +13,30 @@ for existing installations and display integrations, before deployment.
 
 ## Install
 
-Download a release binary (or [build one](#building)), copy it to the Pi and
-run (use the `arm` build for a Pi Zero W or any 32-bit OS, `arm64` for a
+From an interactive terminal on the Pi (Raspberry Pi OS Bookworm or later):
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/stut/pifi/main/install.sh | sh
+```
+
+The [installer](install.sh) selects the latest stable release for your OS,
+verifies the archive against GitHub's SHA-256 digest, installs it to
+`/usr/local/bin/pifi`, and runs interactive setup. It requires `curl`, Python 3,
+NetworkManager, and `sudo` (unless already root). A wireless interface named
+`wlan0` must be available. Existing configuration and service files are kept
+unless you choose to replace them during setup. The service is not restarted
+automatically, so you can record the hotspot password first.
+
+To inspect the installer before running it, download it to a file:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/stut/pifi/main/install.sh -o install.sh
+less install.sh
+sh install.sh
+```
+
+Alternatively, download a release archive (or [build one](#building)), extract
+it, copy the binary to the Pi and run (use `armv6` for any 32-bit OS, `arm64` for a
 64-bit OS):
 
 ```sh
@@ -156,9 +178,29 @@ watch its parent directory if using filesystem notifications.
 go test -race ./...
 ```
 
+`./build.sh` embeds `git describe --tags --always --dirty` as the version;
+override it with `PIFI_VERSION=v0.2.0 ./build.sh`. A plain `go build` reports
+`PiFi dev`. Release binaries report their exact tag, for example `PiFi v0.2.0`.
+
 For a development device, `./build-and-run.sh <ssh-host>` copies the ARMv6
 build to the specified host's home directory and restarts PiFi there. The
 device's service must already be configured to use that copy of the binary.
+
+## Releases
+
+After merging the intended changes to `main` and checking CI, publish a release:
+
+```sh
+gh release create v0.2.0 --repo stut/pifi --target main \
+  --title "PiFi v0.2.0" --generate-notes
+```
+
+Publishing a release (including publishing a saved draft) triggers the release
+workflow. Pushing a tag alone does not. The workflow builds ARMv6 and ARM64
+archives with the tag embedded in `pifi -v`, includes the license and docs, and
+uploads SHA-256 checksum files. Wait for both build jobs to finish before
+directing users to the installer; it refuses a release whose required asset
+is still missing. GitHub's latest-release endpoint excludes prereleases.
 
 ## License
 
