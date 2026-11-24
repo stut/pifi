@@ -55,7 +55,10 @@ main() {
     esac
 
     # stdin contains this script when piped into sh. Setup must read the tty.
-    { exec 3<>/dev/tty; } 2>/dev/null || fail "Run from an interactive terminal (SSH: use ssh -t)."
+    # dash exits immediately on a failed exec redirection, even before ||.
+    # Probe in a subshell so the parent can print an actionable error first.
+    ( : <>/dev/tty ) 2>/dev/null || fail "Run from an interactive terminal (SSH: use ssh -t)."
+    exec 3<>/dev/tty
     [ -t 3 ] || fail "An interactive terminal is required for setup."
     systemctl is-active --quiet NetworkManager || fail "NetworkManager must be running (Raspberry Pi OS Bookworm or later)."
     [ "$(nmcli -g GENERAL.TYPE device show wlan0)" = wifi ] || fail "Setup requires a wlan0 wireless interface."

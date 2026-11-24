@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import pty
 import select
+import shutil
 import subprocess
 import tarfile
 import tempfile
@@ -109,10 +110,10 @@ class InstallerTest(unittest.TestCase):
                 "browser_download_url": f"https://github.com/stut/pifi/releases/download/v1.2.3/{name}",
             })
 
-    def run_installer(self, terminal=True, **environment):
+    def run_installer(self, terminal=True, shell="/bin/sh", **environment):
         (self.directory / "release.json").write_text(json.dumps(self.release))
         env = dict(self.env, **environment)
-        command = ["/bin/sh", "-c", 'cat "$1" | sh', "test-installer", str(self.script)]
+        command = [shell, "-c", 'cat "$1" | "$2"', "test-installer", str(self.script), shell]
         if not terminal:
             result = subprocess.run(command, env=env, capture_output=True, text=True,
                                     start_new_session=True, timeout=10)
@@ -168,7 +169,19 @@ class InstallerTest(unittest.TestCase):
         self.assert_rejected("Unsupported architecture", TEST_MACHINE="x86_64")
 
     def test_requires_terminal(self):
-        self.assert_rejected("interactive terminal", terminal=False)
+        # macOS sh is bash; Ubuntu sh is dash. Both must print the diagnostic
+        # rather than silently exit when opening /dev/tty fails.
+        for shell in dict.fromkeys(("/bin/sh", shutil.which("dash") or "/bin/sh")):
+            with self.subTest(shell=shell):
+                self.assert_rejected("interactive terminal", terminal=False, shell=shell)
+
+    def test_dash_terminal_setup(self):
+        shell = shutil.which("dash")
+        if not shell:
+            self.skipTest("dash is not installed")
+        code, output = self.run_installer(shell=shell)
+        self.assertEqual(code, 0, output)
+        self.assertIn("setup-read-terminal", output)
 
     def test_missing_asset(self):
         self.release["assets"] = []
