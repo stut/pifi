@@ -1,0 +1,30 @@
+on:
+  release:
+    types: [created]
+
+permissions:
+    contents: write
+
+jobs:
+  release:
+    name: release linux/${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goarch: arm64
+          # ARMv6 covers the Pi Zero W and every other 32-bit Pi OS install.
+          - goarch: arm
+            goarm: "6"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: wangyoucao577/go-release-action@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: linux
+        goarch: ${{ matrix.goarch }}
+        goarm: ${{ matrix.goarm }}
+        project_path: "./cmd/pifi"
+        # Keep the runner's build paths out of log lines.
+        build_flags: -trimpath
+        binary_name: "pifi"

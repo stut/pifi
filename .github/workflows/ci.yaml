@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+    - name: gofmt
+      run: |
+        unformatted=$(gofmt -l .)
+        if [ -n "$unformatted" ]; then
+          echo "Not gofmt-formatted:"
+          echo "$unformatted"
+          exit 1
+        fi
+    - run: go vet ./...
+    - run: go test -race ./...
+    - name: Cross-compile for the Pi
+      run: GOOS=linux GOARCH=arm GOARM=6 go build ./...

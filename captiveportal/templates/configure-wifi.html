@@ -1,0 +1,45 @@
+{{define "title"}}WiFi Setup{{end}}
+
+{{define "content"}}
+{{ if .Error }}<div class="error visible">{{ .Error }}</div>{{ end }}
+
+<form class="wifi-form" method="post" action="/configure-wifi" novalidate>
+    <div class="form-group">
+        <label for="ssid">Network name</label>
+        <input type="text" id="ssid" name="ssid" value="{{ .SSID }}" placeholder="Enter SSID" tabindex="1" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="text" id="password" name="password" placeholder="Leave empty for open networks" tabindex="2" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    </div>
+    <button type="submit" class="btn" tabindex="3">Connect</button>
+</form>
+
+<script>
+(function () {
+    var form = document.querySelector('.wifi-form');
+    var errorEl = document.querySelector('.error');
+
+    form.addEventListener('submit', function (e) {
+        var ssid = document.getElementById('ssid').value;
+        if (!ssid) {
+            e.preventDefault();
+            if (!errorEl) {
+                errorEl = document.createElement('div');
+                errorEl.className = 'error visible';
+                form.parentNode.insertBefore(errorEl, form);
+            }
+            errorEl.textContent = 'Please enter a network name';
+            errorEl.className = 'error visible';
+            return;
+        }
+        if (errorEl) errorEl.className = 'error';
+        var btn = form.querySelector('.btn');
+        btn.disabled = true;
+        btn.textContent = 'Connecting\u2026';
+    });
+
+    document.getElementById('ssid').focus();
+})();
+</script>
+{{end}}

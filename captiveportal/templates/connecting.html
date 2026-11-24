@@ -1,0 +1,22 @@
+{{define "title"}}Connecting{{end}}
+
+{{define "subtitle"}}<h1>Connecting to {{ .SSID }}</h1>{{end}}
+
+{{define "content"}}
+<div class="spinner-wrap">
+    <div class="spinner"></div>
+</div>
+<div class="status-text">
+    <h2>Connecting&hellip;</h2>
+    <p>This may take a moment. This page will update automatically once the connection is established.</p>
+    <p>You can close this page &mdash; the device will continue connecting in the background.</p>
+</div>
+
+<script>
+// Go to the bare URL rather than reloading: the first load carries ?skip-check=true, and a reload would keep it
+// so the connection check would never run.
+setTimeout(function () {
+    window.location.href = "/connecting";
+}, 5000);
+</script>
+{{end}}

@@ -1,0 +1,187 @@
+:root {
+    --bg: #f0eee9;
+    --surface: #ffffff;
+    --text: #3a3a3a;
+    --text-muted: #8a8a8a;
+    --accent: #7c9eb2;
+    --accent-hover: #6a8da1;
+    --accent-text: #ffffff;
+    --border: #d8d4cd;
+    --error: #c47070;
+    --error-bg: #f5e0e0;
+    --input-bg: #f7f6f3;
+    --radius: 12px;
+}
+
+body {
+    font-family: -apple-system, system-ui, "Segoe UI", sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    padding: 2rem 1.5rem;
+    width: 100%;
+    max-width: 380px;
+    margin-top: 1rem;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.logo-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.logo-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: var(--accent-text);
+}
+
+.logo h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.logo p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface);
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 0.875rem;
+    background: var(--accent);
+    color: var(--accent-text);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+    margin-top: 1.5rem;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.btn:hover {
+    background: var(--accent-hover);
+}
+
+.btn:active {
+    opacity: 0.9;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Error */
+.error {
+    display: none;
+    background: var(--error-bg);
+    color: var(--error);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.625rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.error.visible {
+    display: block;
+}
+
+/* Connecting page */
+.status-text {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.status-text h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.status-text p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    line-height: 1.6;
+}
+
+.spinner-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
