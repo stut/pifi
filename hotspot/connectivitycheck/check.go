@@ -69,7 +69,7 @@ func (c *ConnectivityCheck) checkConnectivityPing(address string, timeout time.D
 	slog.Debug("Pinging", "host", address)
 	_, _, _, err := c.shell.Run(fmt.Sprintf("ping -c 1 \"%s\"", address), timeout)
 	if err != nil {
-		slog.Debug("Ping failed", "error", err)
+		slog.Info("Ping failed", "host", address, "error", err)
 		return false, nil
 	}
 
@@ -85,7 +85,7 @@ func (c *ConnectivityCheck) checkConnectivityHTTP() (bool, error) {
 	if err != nil {
 		// Like a failed ping, an unreachable URL means "not connected"
 		// rather than a failure of the check itself.
-		slog.Debug("HTTP GET failed", "error", err)
+		slog.Info("HTTP GET failed", "url", c.Config, "error", err)
 		return false, nil
 	}
 	defer resp.Body.Close()
